@@ -78,7 +78,11 @@ def create_default_config(config_path: str):
         }
     }
     
-    os.makedirs(os.path.dirname(config_path), exist_ok=True)
+    # Ensure directory exists
+    config_dir = os.path.dirname(config_path)
+    if config_dir:  # Only create directory if there is one
+        os.makedirs(config_dir, exist_ok=True)
+    
     with open(config_path, 'w') as f:
         json.dump(default_config, f, indent=2)
     

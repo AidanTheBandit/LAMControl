@@ -10,7 +10,7 @@ import sys
 sys.argv = [
     'enhanced_worker_launcher.py',
     '--integrations', 'browser', 'computer', 'ai:openinterpreter',
-    '--worker-name', 'Office-Assistant',
+    '--name', 'Office-Assistant',
     '--location', 'Home Office',
     '--server', 'http://localhost:8080'
 ]

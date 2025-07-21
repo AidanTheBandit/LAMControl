@@ -1,0 +1,28 @@
+2025-07-21 23:34:04,953 - WorkerLauncher - WARNING - Configuration file not found: worker_config.json
+2025-07-21 23:34:04,954 - WorkerLauncher - INFO - Creating default configuration...
+2025-07-21 23:34:50,044 - WorkerLauncher - WARNING - Configuration file not found: worker_config.json
+2025-07-21 23:34:50,044 - WorkerLauncher - INFO - Creating default configuration...
+2025-07-21 23:34:50,045 - WorkerLauncher - INFO - Starting LAMControl Worker: Minimal-Worker
+2025-07-21 23:34:50,045 - WorkerLauncher - INFO - Server endpoint: http://localhost:8080
+2025-07-21 23:34:50,045 - WorkerLauncher - INFO - Worker port: 6000
+2025-07-21 23:34:50,045 - IntegrationManager - INFO - Initialized Enhanced Integration Manager
+2025-07-21 23:34:50,045 - WorkerLauncher - INFO - Loading integrations from command line: ['browser:google_search']
+2025-07-21 23:34:50,046 - WorkerLauncher - INFO - Loading integrations...
+2025-07-21 23:34:50,047 - IntegrationManager - INFO - Discovered integration: browser
+2025-07-21 23:34:50,050 - IntegrationManager - INFO - Discovered integration: computer
+2025-07-21 23:34:51,191 - httpx - INFO - HTTP Request: GET https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json "HTTP/1.1 200 OK"
+2025-07-21 23:34:52,698 - Integration.ai - INFO - OpenInterpreter configured successfully
+2025-07-21 23:34:52,698 - IntegrationManager - INFO - Discovered integration: ai
+2025-07-21 23:34:52,699 - IntegrationManager - INFO - Discovered integration: messaging
+2025-07-21 23:34:52,714 - Integration.browser - INFO - Browser integration initialized
+2025-07-21 23:34:52,714 - IntegrationRegistry - INFO - Registered integration: browser
+2025-07-21 23:34:52,714 - IntegrationManager - INFO - Successfully loaded integration: browser
+2025-07-21 23:34:52,714 - WorkerLauncher - INFO - Integration loading results: 1 loaded, 0 failed
+2025-07-21 23:34:52,714 - WorkerLauncher - INFO -   browser: ✅ SUCCESS
+2025-07-21 23:36:17,662 - IntegrationManager - INFO - Initialized Enhanced Integration Manager
+2025-07-21 23:36:17,664 - IntegrationManager - INFO - Discovered integration: browser
+2025-07-21 23:36:17,667 - IntegrationManager - INFO - Discovered integration: computer
+2025-07-21 23:36:18,823 - httpx - INFO - HTTP Request: GET https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json "HTTP/1.1 200 OK"
+2025-07-21 23:36:20,350 - Integration.ai - INFO - OpenInterpreter configured successfully
+2025-07-21 23:36:20,350 - IntegrationManager - INFO - Discovered integration: ai
+2025-07-21 23:36:20,351 - IntegrationManager - INFO - Discovered integration: messaging
