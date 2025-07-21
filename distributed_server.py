@@ -347,6 +347,9 @@ class DistributedLAMServer:
                     return render_template_string(self._get_r1_login_template(), 
                                                 error="Invalid credentials")
             
+            # GET request - show login form
+            return render_template_string(self._get_r1_login_template())
+            
         @self.app.route('/r1/logout')
         def r1_logout():
             """R1 logout"""
