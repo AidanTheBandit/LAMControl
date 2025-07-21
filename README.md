@@ -1,56 +1,281 @@
+# LAMControl
+
 <p align="center">
-  <img src="assets/LAH_splash.gif" alt="LAMatHome" width="800"/>
+  <img src="assets/LAMAtHome.png" alt="LAMControl" width="400"/>
 </p>
 
 <div align="center">
   <a href="https://discord.gg/6aU9fjyk2g" style="text-decoration: none;">
     <img src="https://dcbadge.limes.pink/api/server/6aU9fjyk2g?style=flat&theme=default-inverted" alt="Discord Badge" width="auto" height="20px">
   </a>
-  <a href="https://github.com/dot-justin/LAMatHome/commits/main" style="text-decoration: none;">
-    <img src="https://img.shields.io/github/commit-activity/m/dot-justin/LAMatHome" alt="Commit Activity">
+  <a href="https://github.com/AidanTheBandit/LAMControl/commits/main" style="text-decoration: none;">
+    <img src="https://img.shields.io/github/commit-activity/m/AidanTheBandit/LAMControl" alt="Commit Activity">
   </a>
-  <a href="https://github.com/dot-justin/LAMatHome/commits/main" style="text-decoration: none;">
-    <img src="https://img.shields.io/github/last-commit/dot-justin/LAMatHome" alt="Last Commit">
+  <a href="https://github.com/AidanTheBandit/LAMControl/commits/main" style="text-decoration: none;">
+    <img src="https://img.shields.io/github/last-commit/AidanTheBandit/LAMControl" alt="Last Commit">
   </a>
-  <a href="https://github.com/dot-justin/LAMatHome/issues" style="text-decoration: none;">
-    <img src="https://img.shields.io/github/issues/dot-justin/LAMatHome" alt="Issues">
+  <a href="https://github.com/AidanTheBandit/LAMControl/issues" style="text-decoration: none;">
+    <img src="https://img.shields.io/github/issues/AidanTheBandit/LAMControl" alt="Issues">
   </a>
 </div>
 
 <p align="center">
-  <i>LAMControl helps you expand the functionality of your rabbit r1.</i>
+  <i>Advanced distributed control system for your Rabbit R1 with pluggable integrations</i>
 </p>
-
-## 🚀 NEW: Web Mode Available!
-
-LAMControl now supports **Web Mode** - a simpler alternative to Rabbit Hole integration that hosts a local web server with authentication. Your R1 can send prompts directly via HTTP requests!
-
-### Web Mode Benefits:
-- ✅ **No Rabbit Hole tokens required**
-- ✅ **Simple HTTP API** for R1 integration
-- ✅ **Admin dashboard** to monitor prompts
-- ✅ **Real-time processing**
-- ✅ **Test interface** for debugging
-
-**Quick Start (Web Mode):**
-1. Set `"mode": "web"` in `config.json`
-2. Run `python main.py` (only GROQ API key required)
-3. Access dashboard at `http://localhost:5000`
-4. Use `r1_client.py` to send prompts from R1
-
-📖 **[Complete Web Mode Setup Guide](WEB_MODE_GUIDE.md)**
 
 ---
 
-## Overview:
+## 🚀 What is LAMControl?
 
-### Operating Modes:
+LAMControl is a **distributed automation system** that turns your Rabbit R1 into a powerful control hub for your digital life. Use natural language to control browsers, computers, messaging platforms, and AI tools across multiple devices.
 
-LAMControl supports three operating modes:
+## ✨ Key Features
 
-1. **Web Mode** (NEW): Host a web server for direct R1 integration via HTTP API
-2. **Rabbit Mode**: Connect to hole.rabbit.tech and monitor journal entries  
-3. **CLI Mode**: Interactive command-line interface
+- 🧩 **Pluggable Integrations**: Install only what you need
+- 🌐 **Distributed Architecture**: Scale across multiple devices
+- ⚙️ **Feature-Based Configuration**: Fine-grained control
+- 🔄 **Auto-Discovery**: Automatic integration detection
+- 📦 **Dependency Management**: Automatic package installation
+- 🎯 **Dynamic Loading**: No restart required for changes
+
+## 🛠️ Available Integrations
+
+| Integration | Features | Capabilities |
+|-------------|----------|--------------|
+| **🌐 Browser** | Site browsing, Google/YouTube/Gmail/Amazon search | Web automation and search |
+| **💻 Computer** | Volume/media/system/power control | Local system automation |
+| **💬 Messaging** | Discord, Telegram, Facebook | Social platform integrations |
+| **🤖 AI** | OpenInterpreter, automation, LLM integration | AI-powered tasks |
+
+## 🚀 Quick Start
+
+### Server Installation (Cloud/VPS)
+
+```bash
+# Clone repository
+git clone https://github.com/AidanTheBandit/LAMControl.git
+cd LAMControl
+
+# Install dependencies
+pip install -r requirements_distributed.txt
+
+# Start server
+python3 distributed_server.py
+```
+
+### Worker Installation (Local Computer)
+
+```bash
+# Enhanced installation with specific integrations
+curl -sSL https://raw.githubusercontent.com/AidanTheBandit/LAMControl/main/install_worker_enhanced.sh | bash -s -- \
+  --integrations browser:google_search,youtube_search,computer:volume_control \
+  --server-host your-server-ip \
+  --worker-name "Home-Assistant"
+```
+
+### Manual Worker Setup
+
+```bash
+# Clone repository
+git clone https://github.com/AidanTheBandit/LAMControl.git
+cd LAMControl
+
+# Install dependencies
+pip install -r requirements_distributed.txt
+
+# Start worker with specific integrations
+python3 enhanced_worker_launcher.py --integrations browser,computer --server http://your-server:5000
+```
+
+## 📖 Documentation
+
+- **[Integration System Guide](INTEGRATION_SYSTEM_GUIDE.md)** - Complete integration documentation
+- **[Implementation Summary](IMPLEMENTATION_SUMMARY.md)** - Technical implementation details
+
+## 🎮 Usage Examples
+
+### Basic Commands
+```
+"Search YouTube for Python tutorials"
+"Turn volume to 50"
+"Open Google and search for weather"
+"Send Discord message to John: Meeting at 3pm"
+```
+
+### Worker Management
+```bash
+# List available integrations
+python3 enhanced_worker_launcher.py --list-integrations
+
+# Test configuration without starting
+python3 enhanced_worker_launcher.py --dry-run --integrations browser:google_search
+
+# Create configuration template
+python3 integration_manager.py --template worker_template.json
+```
+
+## 🏗️ Architecture
+
+```
+Rabbit R1 ──► Central Server ──► Worker Nodes
+                   │                 ├─ Browser Worker (PC 1)
+                   │                 ├─ Computer Worker (PC 2)
+                   └─ Dashboard      └─ AI Worker (PC 3)
+```
+
+### Components
+
+- **Central Server**: Receives R1 prompts, processes with LLM, routes tasks
+- **Worker Nodes**: Execute tasks using pluggable integrations
+- **Admin Dashboard**: Monitor system health and manage workers
+- **Enhanced R1 Client**: Improved communication with error handling
+
+## ⚙️ Configuration
+
+### Worker Configuration Example
+```json
+{
+  "worker": {
+    "name": "Home-Assistant",
+    "location": "Living Room"
+  },
+  "server": {
+    "endpoint": "http://localhost:5000"
+  },
+  "integrations": {
+    "browser": {
+      "enabled": true,
+      "features": ["google_search", "youtube_search"],
+      "settings": {"default_browser": "firefox"}
+    },
+    "computer": {
+      "enabled": true,
+      "features": ["volume_control"],
+      "settings": {"vol_step_value": 10}
+    }
+  }
+}
+```
+
+## 🔧 Development
+
+### Adding New Integrations
+
+1. Create integration file in `integrations/` directory
+2. Inherit from `Integration` base class
+3. Define metadata and features
+4. Implement required methods
+
+```python
+# integrations/my_integration.py
+from integrations import Integration, IntegrationConfig
+
+INTEGRATION_METADATA = {
+    "name": "my_integration",
+    "version": "1.0.0",
+    "description": "My custom integration"
+}
+
+class MyIntegration(Integration):
+    def get_capabilities(self):
+        return ["my_capability"]
+    
+    def get_handlers(self):
+        return {"my_capability": self._handle_task}
+    
+    def initialize(self):
+        return True
+    
+    def cleanup(self):
+        pass
+```
+
+### Testing
+```bash
+# Run integration demo
+python3 demo_integrations.py
+
+# Test minimal worker
+python3 demo_minimal_worker.py
+
+# Test specific integration
+python3 integration_manager.py --load browser:google_search
+```
+
+## 📋 Requirements
+
+- **Python 3.8+**
+- **Flask** for web server
+- **Requests** for HTTP communication
+- **Groq API Key** for LLM processing
+- **Playwright** (for browser integration)
+- **Additional packages** installed automatically per integration
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit changes (`git commit -m 'Add amazing feature'`)
+4. Push branch (`git push origin feature/amazing-feature`)
+5. Open Pull Request
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🆘 Support
+
+- 💬 [Discord Community](https://discord.gg/6aU9fjyk2g)
+- 🐛 [Report Issues](https://github.com/AidanTheBandit/LAMControl/issues)
+- 📧 Contact: [Your Email]
+
+## 🙏 Acknowledgments
+
+- Rabbit Inc. for the amazing R1 device
+- Open source community for the tools and libraries
+- Contributors who make this project possible
+
+---
+
+<p align="center">
+  <b>Transform your Rabbit R1 into the ultimate automation hub! 🚀</b>
+</p>
+
+# Or clone and run locally
+git clone https://github.com/AidanTheBandit/LAMControl.git
+cd LAMControl
+python3 enhanced_worker_launcher.py --integrations browser,computer
+```
+
+📖 **[Complete Integration Guide](INTEGRATION_SYSTEM_GUIDE.md)**
+
+---
+
+## 🎯 Operating Modes:
+
+LAMControl supports multiple operating modes to fit different use cases:
+
+### 🌐 **Distributed Mode** (Recommended - NEW!)
+- **Central server with pluggable worker nodes**
+- Scale across multiple computers and locations
+- Mix and match integrations per worker
+- Enhanced performance and reliability
+- Perfect for home automation setups
+
+### 🖥️ **Web Mode**
+- Direct HTTP API for R1 integration
+- Admin dashboard for monitoring
+- No Rabbit Hole tokens required
+- Great for single-machine setups
+
+### 🐰 **Rabbit Mode** (Legacy)
+- Connects to hole.rabbit.tech
+- Monitors journal entries  
+- Requires Rabbit Hole access token
+
+### 💻 **CLI Mode**
+- Interactive command-line interface
+- Perfect for testing and development
 
 ### Grabbing journal entries (Rabbit Mode):
 By using your `hole.rabbit.tech` account token, we can directly fetch journal entries from the API. By doing this, we can efficiently grab your latest journal entry.
@@ -104,84 +329,160 @@ Below is a list of our current integrations. This list is kept up-to-date.
 
 ## Quick start guide:
 
-### Choose Your Mode:
+## 📦 Installation & Setup
 
-LAMControl supports multiple operating modes. Choose the one that best fits your setup:
+### System Requirements:
+- **Python 3.8+** (required)
+- **Git** (for installation)
+- **pip** (Python package manager)
+- **Internet connection** (for dependency installation)
 
-#### 🌐 Web Mode (Recommended for new users)
-- **No Rabbit Hole tokens required**
-- Direct HTTP API for R1 integration
-- Admin dashboard for monitoring
+### 🚀 Quick Start (Distributed Mode - Recommended)
 
-#### 🚀 Distributed Mode (NEW - For advanced users)
-- **Central server with remote worker nodes**
-- Scale across multiple computers
-- Cloud server + local workers
-- Enhanced performance and reliability
-
-#### 🐰 Rabbit Mode (Original method)
-- Connects to hole.rabbit.tech
-- Monitors journal entries
-- Requires Rabbit Hole access token
-
-#### 💻 CLI Mode
-- Interactive command-line interface
-- Good for testing and development
-
-### Setup Instructions:
-
-**1. Clone the repository and CD into it**
-
+#### Option 1: Automated Installation
 ```bash
-git clone https://github.com/dot-justin/LAMatHome
-cd LAMatHome
+# Install server and worker with browser + computer integrations
+curl -sSL https://raw.githubusercontent.com/AidanTheBandit/LAMControl/main/install_worker_enhanced.sh | bash -s -- \
+  --integrations browser,computer \
+  --server-host localhost \
+  --worker-name "My-LAM-Worker"
 ```
 
-**2. Install dependencies**
+#### Option 2: Manual Installation
 ```bash
-pip install -r requirements.txt
+# 1. Clone the repository
+git clone https://github.com/AidanTheBandit/LAMControl.git
+cd LAMControl
+
+# 2. Install dependencies
+pip3 install -r requirements_distributed.txt
+
+# 3. Start the server
+python3 distributed_server.py
+
+# 4. In another terminal, start a worker with integrations
+python3 enhanced_worker_launcher.py --integrations browser,computer
+```
+
+### 🌐 Web Mode Setup (Single Machine)
+```bash
+# 1. Clone repository
+git clone https://github.com/AidanTheBandit/LAMControl.git
+cd LAMControl
+
+# 2. Install dependencies
+pip3 install -r requirements.txt
 playwright install
+
+# 3. Configure for web mode
+cp config.json config_backup.json
+# Edit config.json: set "mode": "web"
+
+# 4. Run LAMControl
+python3 main.py
 ```
 
-**3a. Web Mode Setup (Recommended)**
+### 🐰 Rabbit Mode Setup (Legacy)
+```bash
+# 1. Follow Web Mode steps 1-2
+# 2. Configure for rabbit mode
+# Edit config.json: set "mode": "rabbit"
+# 3. Get your Rabbit Hole token (see instructions below)
+# 4. Run LAMControl
+python3 main.py
+```
 
-1. Edit `config.json` and set `"mode": "web"`
-2. Run LAMControl: `python main.py`
-3. Enter your GROQ API Key when prompted (other credentials are optional)
-4. Access admin dashboard at `http://localhost:5000`
-5. Use `r1_client.py` to send prompts from R1
+---
 
-📖 **[Complete Web Mode Guide](WEB_MODE_GUIDE.md)**
+## 🔧 Configuration
 
-**3b. Distributed Mode Setup (Advanced)**
+### Required API Keys:
+1. **GROQ API Key** (required for all modes):
+   - Go to [console.groq.com](https://console.groq.com)
+   - Create account and generate API key
+   - Add to `.env` file: `GROQ_API_KEY=your_key_here`
 
-1. **Server Setup (Cloud/VPS):**
-   ```bash
-   cp config_distributed.json config.json
-   # Edit config.json: set "mode": "distributed_server"
-   python main_distributed.py
-   ```
+2. **Rabbit Hole Token** (only for Rabbit Mode):
+   - Instructions below in Rabbit Mode section
 
-2. **Worker Setup (Local Computers):**
-   ```bash
-   # For browser automation
-   python workers/browser_worker.py http://your-server:5000
-   
-   # For computer control  
-   python workers/computer_worker.py http://your-server:5000
-   
-   # For messaging
-   python workers/messaging_worker.py http://your-server:5000
-   ```
+### Integration-Specific Configuration:
 
-3. **R1 Client:**
-   ```bash
-   python r1_client_distributed.py --servers http://your-server:5000 "your command"
-   ```
+#### Browser Integration:
+```json
+{
+  "integrations": {
+    "browser": {
+      "enabled": true,
+      "features": ["google_search", "youtube_search", "site_browsing"],
+      "settings": {
+        "default_browser": "system_default"
+      }
+    }
+  }
+}
+```
 
-📖 **[Complete Distributed Setup Guide](DISTRIBUTED_DEPLOYMENT_GUIDE.md)**
+#### Computer Integration:
+```json
+{
+  "integrations": {
+    "computer": {
+      "enabled": true,
+      "features": ["volume_control", "media_control", "system_control"],
+      "settings": {
+        "vol_step_value": 5
+      }
+    }
+  }
+}
+```
 
-**3c. Rabbit Mode Setup (Original method)**
+#### Messaging Integration:
+```json
+{
+  "integrations": {
+    "messaging": {
+      "enabled": true,
+      "features": ["discord", "telegram"],
+      "settings": {
+        "auto_connect": false
+      }
+    }
+  }
+}
+```
+
+---
+
+## 🎮 Usage Examples
+
+### Distributed Mode Commands:
+```bash
+# List available integrations
+python3 enhanced_worker_launcher.py --list-integrations
+
+# Start worker with specific integrations and features
+python3 enhanced_worker_launcher.py \
+  --integrations browser:google_search,youtube_search,computer:volume_control \
+  --server http://your-server:8080
+
+# Create configuration template
+python3 integration_manager.py --template my_config.json
+
+# Test configuration without starting worker
+python3 enhanced_worker_launcher.py --dry-run --integrations browser,computer
+```
+
+### R1 Voice Commands:
+- *"Search Google for Python tutorials"* → Opens Google search
+- *"Turn the volume up to 75"* → Sets system volume
+- *"Open YouTube and search for cooking videos"* → YouTube search  
+- *"Send a message on Discord to John"* → Discord integration
+- *"Tell Open Interpreter to analyze this file"* → AI integration
+
+---
+
+## 🐰 Rabbit Mode Token Setup (Legacy)
 
 **Obtaining your user token from [the rabbithole](https://hole.rabbit.tech/journal/details):**
 
@@ -207,132 +508,156 @@ playwright install
 
    Note: Your token will expire 24 hours after you log in. This is out of our control but we are working on a better way.
 
-**4. Obtaining an API key from Groq:**
-  1. Go to [console.groq.com/login](https://console.groq.com/login)
-  2. Create an account.
-  3. Once logged in, go to [console.groq.com/keys](https://console.groq.com/keys)
-  4. Click `Create API Key`
-  5. Create a name for your API key. This can be anything you want. Click `Submit`.
-  6. Now, a window will pop up containing your API key. Click on `Copy`. After this point, you will not be able to access this key again from the Groq website. (Don't worry too much, you can create and delete keys at any time.)
-  7. Back in the ui that popped up earlier, enter your API key in the field for `Groq API Key:`
+---
 
->[!WARNING]
->
->  NEVER share your user tokens or API keys. They will be stored locally in the program and will only be used to authenticate with official API's.
+## 🔥 Advanced Features
 
-**5. Running LAMatHome and entering your credentials:**
+### Custom Integration Development:
+```python
+# Create custom integration in integrations/my_integration.py
+from integrations import Integration, IntegrationConfig
+
+INTEGRATION_METADATA = {
+    "name": "my_integration",
+    "version": "1.0.0",
+    "description": "My custom integration"
+}
+
+class MyIntegration(Integration):
+    def get_capabilities(self):
+        return ["my_capability"]
+    
+    def get_handlers(self):
+        return {"my_capability": self._handle_my_capability}
+    
+    def _handle_my_capability(self, task):
+        return "Handled my custom task"
 ```
-py main.py
+
+### Multi-Worker Deployment:
+```bash
+# Deploy multiple specialized workers
+./install_worker_enhanced.sh --integrations browser --worker-name "Browser-Worker" --location "Office"
+./install_worker_enhanced.sh --integrations computer --worker-name "Computer-Worker" --location "Home"
+./install_worker_enhanced.sh --integrations messaging --worker-name "Social-Worker" --location "Cloud"
 ```
-The first time you run LAMatHome, it will bring up a ui to enter your credentials.
-For any service that you want to use, enter your credentials. The only required values here are:
-- Rabbit Hole Access Token
-- GROQ API Key
 
-After you enter these, and hit submit, you should be all set up and ready to go! Remember, you can edit your credentials any time by editing the `.env` file inside the root directory of the project.
+### Production Deployment:
+```bash
+# Server (systemd service)
+sudo systemctl enable lamcontrol-server
+sudo systemctl start lamcontrol-server
 
-### Usage guide:
-When you want to run LAMatHome, do the following:
+# Workers (systemd services)
+systemctl --user enable lamcontrol-worker
+systemctl --user start lamcontrol-worker
+```
 
-Run `main.py` from the root directory
+---
 
-`py main.py`
+## 🛠️ Development & Troubleshooting
 
-This will start the LAMatHome program, and (as long as your token is valid) you can start giving prompts to r1.
+### Development Setup:
+```bash
+git clone https://github.com/AidanTheBandit/LAMControl.git
+cd LAMControl
 
+# Install development dependencies
+pip3 install -r requirements_distributed.txt
 
-### Stopping LAMatHome
-To stop LAMatHome, you have two options.
-1. Via r1 voice prompt (If you can't get this to work, try method 2)
-   - Say `Please close/quit/terminate LAMatHome`.
+# Run tests
+python3 demo_integrations.py
+python3 test_distributed.py
 
-2. Manually
-   - Find the command prompt where it's currently running from.
-   - Press `Ctrl + C` to exit the program. You may see some errors, this is expected and will not mess up your installation.
+# Start development server
+python3 distributed_server.py --debug
+```
 
-## Configuration
-Open the `config.json` file in the root directory of your project. (Use your favorite IDE. A free, lightweight one is [notepad++](https://notepad-plus-plus.org/downloads/))
+### Common Issues:
 
-### General config options:
+| Error | Solution |
+|-------|----------|
+| `Integration not found` | Check integration name and ensure it's in the integrations/ directory |
+| `Dependency installation failed` | Ensure pip is up to date: `pip3 install --upgrade pip` |
+| `Worker connection failed` | Verify server endpoint and port are correct |
+| `Permission denied` | Run with appropriate permissions or check file ownership |
 
-`mode`:
-- Available options: `web`, `rabbit`, and `cli`
-  - `web` mode: Hosts a web server for direct R1 integration via HTTP API (recommended)
-  - `rabbit` mode: Listens to the rabbithole API for journal entries (original method)
-  - `cli` mode: Interactive command-line interface for testing
+### Logs and Debugging:
+```bash
+# View worker logs
+tail -f worker.log
 
-`web_server_host` (Web mode only):
-- `"0.0.0.0"` allows access from any device on your network
-- `"127.0.0.1"` restricts access to localhost only
+# View server logs  
+tail -f server.log
 
-`web_server_port` (Web mode only):
-- Port number for the web server (default: 5000)
+# Debug mode
+python3 enhanced_worker_launcher.py --verbose --dry-run
+```
 
-`rabbithole_api_max_retry` (Rabbit mode only):
-- This determines how many times LAMControl will try to connect after failure.
+---
 
-`rabbithole_api_sleep_time` (Rabbit mode only):
-- This determines how many seconds LAMControl will wait between refreshes.
+## 📚 Documentation
 
-`rolling_transcript_size`:
-- This determines how many of your past prompts will get passed to llm_parse. The higher the number, the more "memory" the LLM has.
+- 📖 **[Integration System Guide](INTEGRATION_SYSTEM_GUIDE.md)** - Complete integration documentation
+- 🚀 **[Distributed Deployment Guide](DISTRIBUTED_DEPLOYMENT_GUIDE.md)** - Advanced deployment scenarios
+- 🔧 **[Worker Installation Guide](WORKER_INSTALLATION_GUIDE.md)** - Detailed worker setup
+- 🧩 **[Pluggable Integrations Guide](PLUGGABLE_INTEGRATIONS_GUIDE.md)** - Custom integration development
 
-### Required Credentials by Mode:
+---
 
-#### Web Mode:
-- **Required**: GROQ API Key only
-- **Optional**: Integration credentials (Discord, Telegram, etc.)
+## 🤝 Contributing
 
-#### Rabbit Mode:
-- **Required**: Rabbit Hole Access Token, GROQ API Key
-- **Optional**: Integration credentials
+We welcome contributions! Here's how to get started:
 
-#### CLI Mode:
-- **Required**: GROQ API Key only
-- **Optional**: Rabbit Hole Access Token (for user info), Integration credentials
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feature/amazing-feature`
+3. Commit your changes: `git commit -m 'Add amazing feature'`
+4. Push to the branch: `git push origin feature/amazing-feature`
+5. Open a Pull Request
 
-### Disabling integrations:
-If you don't want to use specific integration, no worries!
-Find the integration you want to disable. Set each value to `false`, and they will no longer be activated by llm_parse.
+### Development Guidelines:
+- Follow the existing integration pattern for new integrations
+- Add tests for new functionality
+- Update documentation for new features
+- Ensure backwards compatibility
 
-Examples:
-- `"browsergoogle_isenabled": false,` The `Google` function of the `Browser` integration is **disabled**.
-- `"computervolume_isenabled": true,` The `Volume` function of the `Computer` integration is **enabled**.
-- `"browser_isenabled": false,` = All of the browser functions are **disabled**, even if the child functions are set to `true`.
+---
 
-### Telegram integration:
-To get Telegram running and sending texts on your behalf, some setup is required. Follow this guide:
-1. Give LAMatHome any Telegram command. This can be a test, but be aware that the text will be sent after you log in.
-2. A Firefox Nightly window (Playwright instance) will open up and request your sign-in.
-3. Sign in, and watch the text go through. After this, your session is saved and you won't need to log back in for a long while.
+## 👥 Contributors & Acknowledgements
 
-### Google Home integration:
-To allow LAMatHome to use your Google Home, you need to follow these steps:
-1. Add your `G_HOME_EMAIL` and `G_HOME_PASS` to your `.env` file.
-2. Create any Google Home automations that you want to run, using the Google Home mobile app.
-   - Example names that work well with LAMatHome: `Lamp on`, `Lamp off` (one for on and off respectively, because there is no toggle option.), `Goodnight`, etc. llm_parse needs to be able to link the user utterance to an automation.
-3. Add the verbatim Automation names to config.json, on the `googlehomeautomations` line. There are some examples there, just follow the pattern to add more.
-   - `"googlehomeautomations": ["Automation 1", "Automation 2", "Automation 3"],`
-4. You should be set! This list that you just configured will be passed to `/utils/llm_parse.py` and if determined to be run, will run! Ask r1/LAMatHome to "Turn on the lamp in my room" or "Turn off my tv".
+### Contributors:
+[![LAMControl's Contributors](https://stats.deeptrain.net/contributor/AidanTheBandit/LAMControl/?theme=dark)](https://github.com/AidanTheBandit/LAMControl/contributors)
 
-## Other information:
-### Errors you may run into:
-|Error|Meaning/Fix|
-|-|-|
-|`500 Server Error: Internal Server Error for url: https://hole.rabbit.tech/APIs/fetchUserJournal`|This means that for some reason, the request to the rabbit API failed. More often than not, this means that your token has expired. While this *can* happen if your token is valid, it is very rare. [Instructions to obtain user token](https://github.com/dot-Justin/LAMatHome#quick-start-guide)|
-|`playwright._impl._errors.TimeoutError: Page.click: Timeout 30000ms exceeded.`|This means that, in waiting for a certain object on the website to load, it never loaded, and Playwright timed out. If this ever happens, please open a [bug issue](https://github.com/dot-Justin/LAMatHome/issues/new?assignees=&labels=bug&projects=&template=bug_report.md).|
-
-### Prompts:
-|Use case|Prompt|
-|-|-|
-|Get r1 to properly forward commands to LAMatHome using the memory feature:|`Kevin uses r1 to talk to another AI agent called "lam at home". When ever you see that Kevin is talking to ""lam at home"", just give a response like "command forwarded to LAMatHome!" or something along those lines. Kevin will usually say something like "Tell lam at home <task>" or "Have lam at home do <task>" or even "Use lam at home to <task>". You as the r1 will not run any commands or actions when Kevin invokes "lam at home".`|
-
-## Contributors:
-[![LAMatHome's Contributors](https://stats.deeptrain.net/contributor/dot-justin/LAMatHome/?theme=dark)](https://github.com/dot-justin/LAMatHome/contributors)
-
-## Acknowledgements:
+### Special Thanks:
+- Original LAMatHome project inspiration
 - Thanks to poke for the original idea [rabbitWrighter](https://github.com/glovergaytan-fs/rabbitWrighter)
-- Obligatory "There's no way you're that young" [rabbitt](https://github.com/GikitSRC/rabbitt)
+- Community feedback and contributions
+- Open source libraries that make this possible
 
-## License:
-[MIT](https://choosealicense.com/licenses/mit/)
+---
+
+## 📄 License
+
+This project is licensed under the [MIT License](https://choosealicense.com/licenses/mit/) - see the LICENSE file for details.
+
+---
+
+## 🚀 What's Next?
+
+- 🔌 More integrations (Home Assistant, MQTT, etc.)
+- 🌍 Multi-language support
+- 📱 Mobile app for management
+- 🧠 Enhanced AI capabilities
+- ☁️ Cloud deployment options
+
+---
+
+<p align="center">
+  <strong>Ready to supercharge your rabbit r1? Get started with LAMControl today!</strong>
+</p>
+
+<p align="center">
+  <a href="https://github.com/AidanTheBandit/LAMControl/issues">Report Bug</a> •
+  <a href="https://github.com/AidanTheBandit/LAMControl/issues">Request Feature</a> •
+  <a href="https://discord.gg/6aU9fjyk2g">Join Discord</a>
+</p>
