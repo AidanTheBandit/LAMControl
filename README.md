@@ -18,12 +18,41 @@
 </div>
 
 <p align="center">
-  <i>LAMatHome helps you expand the functionality of your rabbit r1.</i>
+  <i>LAMControl helps you expand the functionality of your rabbit r1.</i>
 </p>
+
+## 🚀 NEW: Web Mode Available!
+
+LAMControl now supports **Web Mode** - a simpler alternative to Rabbit Hole integration that hosts a local web server with authentication. Your R1 can send prompts directly via HTTP requests!
+
+### Web Mode Benefits:
+- ✅ **No Rabbit Hole tokens required**
+- ✅ **Simple HTTP API** for R1 integration
+- ✅ **Admin dashboard** to monitor prompts
+- ✅ **Real-time processing**
+- ✅ **Test interface** for debugging
+
+**Quick Start (Web Mode):**
+1. Set `"mode": "web"` in `config.json`
+2. Run `python main.py` (only GROQ API key required)
+3. Access dashboard at `http://localhost:5000`
+4. Use `r1_client.py` to send prompts from R1
+
+📖 **[Complete Web Mode Setup Guide](WEB_MODE_GUIDE.md)**
+
+---
 
 ## Overview:
 
-### Grabbing journal entries:
+### Operating Modes:
+
+LAMControl supports three operating modes:
+
+1. **Web Mode** (NEW): Host a web server for direct R1 integration via HTTP API
+2. **Rabbit Mode**: Connect to hole.rabbit.tech and monitor journal entries  
+3. **CLI Mode**: Interactive command-line interface
+
+### Grabbing journal entries (Rabbit Mode):
 By using your `hole.rabbit.tech` account token, we can directly fetch journal entries from the API. By doing this, we can efficiently grab your latest journal entry.
 
 ### Intention routing and command parsing:
@@ -75,18 +104,52 @@ Below is a list of our current integrations. This list is kept up-to-date.
 
 ## Quick start guide:
 
+### Choose Your Mode:
+
+LAMControl supports three operating modes. Choose the one that best fits your setup:
+
+#### 🌐 Web Mode (Recommended for new users)
+- **No Rabbit Hole tokens required**
+- Direct HTTP API for R1 integration
+- Admin dashboard for monitoring
+
+#### 🐰 Rabbit Mode (Original method)
+- Connects to hole.rabbit.tech
+- Monitors journal entries
+- Requires Rabbit Hole access token
+
+#### 💻 CLI Mode
+- Interactive command-line interface
+- Good for testing and development
+
+### Setup Instructions:
+
 **1. Clone the repository and CD into it**
 
-```
+```bash
 git clone https://github.com/dot-justin/LAMatHome
 cd LAMatHome
 ```
+
 **2. Install dependencies**
-```
+```bash
 pip install -r requirements.txt
 playwright install
 ```
-**3. Obtaining your user token from [the rabbithole](https://hole.rabbit.tech/journal/details):**
+
+**3a. Web Mode Setup (Recommended)**
+
+1. Edit `config.json` and set `"mode": "web"`
+2. Run LAMControl: `python main.py`
+3. Enter your GROQ API Key when prompted (other credentials are optional)
+4. Access admin dashboard at `http://localhost:5000`
+5. Use `r1_client.py` to send prompts from R1
+
+📖 **[Complete Web Mode Guide](WEB_MODE_GUIDE.md)**
+
+**3b. Rabbit Mode Setup (Original method)**
+
+**Obtaining your user token from [the rabbithole](https://hole.rabbit.tech/journal/details):**
 
 - *Google Chrome*
    1. Log into the rabbit hole from the link above
@@ -157,17 +220,42 @@ To stop LAMatHome, you have two options.
 Open the `config.json` file in the root directory of your project. (Use your favorite IDE. A free, lightweight one is [notepad++](https://notepad-plus-plus.org/downloads/))
 
 ### General config options:
+
 `mode`:
-- The only options here are `rabbit` and `cli`. `rabbit` mode will listen to the rabbithole api for journal entries, while `cli` mode will turn LAMatHome into a dumb [OpenInterpreter](https://github.com/OpenInterpreter/open-interpreter).
+- Available options: `web`, `rabbit`, and `cli`
+  - `web` mode: Hosts a web server for direct R1 integration via HTTP API (recommended)
+  - `rabbit` mode: Listens to the rabbithole API for journal entries (original method)
+  - `cli` mode: Interactive command-line interface for testing
 
-`rabbithole_api_max_retry`:
-- This determines how many times LAMatHome will try to connect after failure.
+`web_server_host` (Web mode only):
+- `"0.0.0.0"` allows access from any device on your network
+- `"127.0.0.1"` restricts access to localhost only
 
-`rabbithole_api_sleep_time`:
-- This determines how many seconds LAMatHome will wait between refreshes.
+`web_server_port` (Web mode only):
+- Port number for the web server (default: 5000)
+
+`rabbithole_api_max_retry` (Rabbit mode only):
+- This determines how many times LAMControl will try to connect after failure.
+
+`rabbithole_api_sleep_time` (Rabbit mode only):
+- This determines how many seconds LAMControl will wait between refreshes.
 
 `rolling_transcript_size`:
 - This determines how many of your past prompts will get passed to llm_parse. The higher the number, the more "memory" the LLM has.
+
+### Required Credentials by Mode:
+
+#### Web Mode:
+- **Required**: GROQ API Key only
+- **Optional**: Integration credentials (Discord, Telegram, etc.)
+
+#### Rabbit Mode:
+- **Required**: Rabbit Hole Access Token, GROQ API Key
+- **Optional**: Integration credentials
+
+#### CLI Mode:
+- **Required**: GROQ API Key only
+- **Optional**: Rabbit Hole Access Token (for user info), Integration credentials
 
 ### Disabling integrations:
 If you don't want to use specific integration, no worries!

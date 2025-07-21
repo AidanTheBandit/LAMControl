@@ -5,3 +5,6 @@ tk
 requests
 groq
 open-interpreter
+flask
+flask-socketio
+pydantic
