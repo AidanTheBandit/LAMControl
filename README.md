@@ -106,12 +106,18 @@ Below is a list of our current integrations. This list is kept up-to-date.
 
 ### Choose Your Mode:
 
-LAMControl supports three operating modes. Choose the one that best fits your setup:
+LAMControl supports multiple operating modes. Choose the one that best fits your setup:
 
 #### 🌐 Web Mode (Recommended for new users)
 - **No Rabbit Hole tokens required**
 - Direct HTTP API for R1 integration
 - Admin dashboard for monitoring
+
+#### 🚀 Distributed Mode (NEW - For advanced users)
+- **Central server with remote worker nodes**
+- Scale across multiple computers
+- Cloud server + local workers
+- Enhanced performance and reliability
 
 #### 🐰 Rabbit Mode (Original method)
 - Connects to hole.rabbit.tech
@@ -147,7 +153,35 @@ playwright install
 
 📖 **[Complete Web Mode Guide](WEB_MODE_GUIDE.md)**
 
-**3b. Rabbit Mode Setup (Original method)**
+**3b. Distributed Mode Setup (Advanced)**
+
+1. **Server Setup (Cloud/VPS):**
+   ```bash
+   cp config_distributed.json config.json
+   # Edit config.json: set "mode": "distributed_server"
+   python main_distributed.py
+   ```
+
+2. **Worker Setup (Local Computers):**
+   ```bash
+   # For browser automation
+   python workers/browser_worker.py http://your-server:5000
+   
+   # For computer control  
+   python workers/computer_worker.py http://your-server:5000
+   
+   # For messaging
+   python workers/messaging_worker.py http://your-server:5000
+   ```
+
+3. **R1 Client:**
+   ```bash
+   python r1_client_distributed.py --servers http://your-server:5000 "your command"
+   ```
+
+📖 **[Complete Distributed Setup Guide](DISTRIBUTED_DEPLOYMENT_GUIDE.md)**
+
+**3c. Rabbit Mode Setup (Original method)**
 
 **Obtaining your user token from [the rabbithole](https://hole.rabbit.tech/journal/details):**
 

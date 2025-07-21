@@ -1,0 +1,25 @@
+# LAMControl Distributed System Requirements
+
+# Core dependencies from original project
+flask>=2.3.0
+flask-socketio>=5.3.0
+requests>=2.31.0
+groq>=0.4.0
+pydantic>=2.0.0
+coloredlogs>=15.0
+playwright>=1.40.0
+
+# Additional dependencies for distributed system
+eventlet>=0.33.0  # For SocketIO server
+python-socketio[client]>=5.8.0  # For worker connections
+asyncio-mqtt>=0.13.0  # For message queuing (optional)
+
+# Optional dependencies for enhanced features
+redis>=4.5.0  # For distributed caching and message queues
+celery>=5.3.0  # For advanced task queuing
+prometheus_client>=0.17.0  # For monitoring and metrics
+
+# Development dependencies
+pytest>=7.4.0
+pytest-asyncio>=0.21.0
+pytest-mock>=3.11.0

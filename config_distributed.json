@@ -1,6 +1,26 @@
 {
 	"mode": "distributed_server",
-		"mode_comment": "distributed_server/web/rabbit/cli mode. distributed_server runs the central server, web mode will host a web server for R1 to send prompts directly, rabbit mode will listen to the rabbithole api for journal entries, while cli mode will turn LAMatHome into a dumb OpenInterpreter.",
+		"mode_comment": "Options: 'web', 'rabbit', 'cli', 'distributed_server', 'distributed_worker'. distributed_server runs the central server, distributed_worker runs a worker node.",
+	
+	"distributed": {
+		"server_host": "0.0.0.0",
+		"server_port": 5000,
+		"worker_discovery_enabled": true,
+		"max_workers_per_type": 10,
+		"task_timeout": 300,
+		"worker_heartbeat_interval": 30,
+		"worker_offline_timeout": 120
+	},
+	
+	"worker": {
+		"type": "browser",
+		"type_comment": "Options: 'browser', 'computer', 'messaging', 'ai'. Only used when mode is 'distributed_worker'.",
+		"server_endpoint": "http://localhost:5000",
+		"worker_port": 6001,
+		"max_concurrent_tasks": 5,
+		"auto_register": true
+	},
+	
 	"env_file": ".env",
 	"cache_dir": "cache",
 	"state_file": "state.json",
