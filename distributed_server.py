@@ -67,6 +67,9 @@ class DistributedLAMServer:
             'active_workers': 0
         }
         
+        # Load previously registered workers
+        self._load_workers_from_disk()
+        
         self.admin_credentials = self._load_admin_credentials()
         self.setup_routes()
         self.setup_socketio_events()
@@ -88,6 +91,61 @@ class DistributedLAMServer:
                 f.write(secret_key)
             return secret_key
     
+    def _load_workers_from_disk(self):
+        """Load previously registered workers from disk"""
+        workers_file = os.path.join(config.config.get('cache_dir', 'cache'), 'workers.json')
+        
+        if os.path.exists(workers_file):
+            try:
+                with open(workers_file, 'r') as f:
+                    workers_data = json.load(f)
+                
+                for worker_data in workers_data:
+                    worker = WorkerNode(
+                        worker_id=worker_data['worker_id'],
+                        worker_type=worker_data['worker_type'],
+                        capabilities=worker_data['capabilities'],
+                        endpoint=worker_data['endpoint'],
+                        api_key=worker_data['api_key']
+                    )
+                    worker.location = worker_data.get('location', '')
+                    worker.description = worker_data.get('description', '')
+                    worker.custom_name = worker_data.get('custom_name', worker_data['worker_id'])
+                    worker.status = "offline"  # Workers start offline until they send heartbeat
+                    
+                    self.workers[worker.worker_id] = worker
+                
+                logging.info(f"Loaded {len(workers_data)} workers from disk")
+            except Exception as e:
+                logging.error(f"Error loading workers from disk: {e}")
+    
+    def _save_workers_to_disk(self):
+        """Save registered workers to disk"""
+        workers_file = os.path.join(config.config.get('cache_dir', 'cache'), 'workers.json')
+        
+        try:
+            os.makedirs(os.path.dirname(workers_file), exist_ok=True)
+            
+            workers_data = []
+            for worker in self.workers.values():
+                workers_data.append({
+                    'worker_id': worker.worker_id,
+                    'worker_type': worker.worker_type,
+                    'capabilities': worker.capabilities,
+                    'endpoint': worker.endpoint,
+                    'api_key': worker.api_key,
+                    'location': getattr(worker, 'location', ''),
+                    'description': getattr(worker, 'description', ''),
+                    'custom_name': getattr(worker, 'custom_name', worker.worker_id)
+                })
+            
+            with open(workers_file, 'w') as f:
+                json.dump(workers_data, f, indent=2)
+            
+            logging.info(f"Saved {len(workers_data)} workers to disk")
+        except Exception as e:
+            logging.error(f"Error saving workers to disk: {e}")
+
     def _load_admin_credentials(self):
         """Load or create admin credentials"""
         creds_file = os.path.join(config.config.get('cache_dir', 'cache'), 'admin_creds.json')
@@ -424,6 +482,9 @@ class DistributedLAMServer:
                 
                 self.workers[worker.worker_id] = worker
                 self.stats['active_workers'] = len([w for w in self.workers.values() if w.status == 'online'])
+                
+                # Save workers to disk for persistence
+                self._save_workers_to_disk()
                 
                 logging.info(f"Registered worker: {worker.worker_id} ({worker.worker_type}) at {worker.endpoint}")
                 self.broadcast_worker_update()

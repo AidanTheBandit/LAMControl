@@ -1,0 +1,56 @@
+{
+  "worker": {
+    "name": "Demo-Worker",
+    "location": "Demo Environment",
+    "description": "Demonstration of pluggable integrations",
+    "port": 6000
+  },
+  "server": {
+    "endpoint": "http://localhost:8080"
+  },
+  "integrations": {
+    "browser": {
+      "enabled": true,
+      "features": [
+        "site_browsing",
+        "google_search",
+        "youtube_search"
+      ],
+      "settings": {
+        "default_browser": "system_default",
+        "search_domain": "google.com"
+      }
+    },
+    "computer": {
+      "enabled": true,
+      "features": [
+        "volume_control",
+        "media_control"
+      ],
+      "settings": {
+        "vol_step_value": 5,
+        "max_volume": 100
+      }
+    },
+    "messaging": {
+      "enabled": false,
+      "features": [
+        "discord",
+        "telegram"
+      ],
+      "settings": {
+        "auto_connect": false
+      }
+    },
+    "ai": {
+      "enabled": false,
+      "features": [
+        "openinterpreter"
+      ],
+      "settings": {
+        "llm_model": "llama-3.3-70b-versatile",
+        "auto_run": false
+      }
+    }
+  }
+}
