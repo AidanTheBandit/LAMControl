@@ -12,6 +12,7 @@ import secrets
 import hashlib
 import asyncio
 import threading
+import queue
 from datetime import datetime, timezone
 from typing import Dict, List, Optional, Any
 from flask import Flask, request, jsonify, render_template_string, session, redirect, url_for
@@ -56,7 +57,7 @@ class DistributedLAMServer:
         self.workers: Dict[str, WorkerNode] = {}
         self.pending_tasks = []
         self.completed_tasks = []
-        self.task_queue = asyncio.Queue()
+        self.task_queue = queue.Queue()  # Use thread-safe queue instead of asyncio.Queue
         
         # Statistics
         self.stats = {
@@ -202,9 +203,16 @@ class DistributedLAMServer:
         """Setup background tasks for worker management"""
         def task_processor():
             """Process queued tasks"""
-            loop = asyncio.new_event_loop()
-            asyncio.set_event_loop(loop)
-            loop.run_until_complete(self._process_tasks())
+            while True:
+                try:
+                    # Get task from queue (blocks until available)
+                    task = self.task_queue.get(timeout=1)
+                    self._route_task_to_worker_sync(task)
+                    self.task_queue.task_done()
+                except queue.Empty:
+                    continue
+                except Exception as e:
+                    logging.error(f"Error processing task: {e}")
         
         def heartbeat_checker():
             """Check worker heartbeats"""
@@ -219,15 +227,81 @@ class DistributedLAMServer:
         task_thread.start()
         heartbeat_thread.start()
     
-    async def _process_tasks(self):
-        """Async task processor"""
-        while True:
+    def _route_task_to_worker_sync(self, task: Dict):
+        """Route task to appropriate worker node (synchronous version)"""
+        try:
+            action = task.get('action', '').lower()
+            
+            # Determine worker type needed
+            worker_type = None
+            if any(keyword in action for keyword in ['browser', 'google', 'youtube', 'site', 'amazon']):
+                worker_type = 'browser'
+            elif any(keyword in action for keyword in ['computer', 'volume', 'media', 'run', 'power']):
+                worker_type = 'computer'
+            elif any(keyword in action for keyword in ['discord', 'telegram', 'messenger']):
+                worker_type = 'messaging'
+            elif action in ['ai', 'openinterpreter']:
+                worker_type = 'ai'
+            
+            if not worker_type:
+                logging.warning(f"No worker type determined for action: {action}")
+                return
+            
+            # Find available worker
+            available_workers = [
+                w for w in self.workers.values()
+                if w.worker_type == worker_type and w.status == 'online' 
+                and w.current_tasks < w.max_concurrent_tasks
+            ]
+            
+            if not available_workers:
+                logging.warning(f"No available {worker_type} workers")
+                self.stats['failed_tasks'] += 1
+                # Broadcast status update
+                self.socketio.emit('task_status', {
+                    'task_id': task['id'],
+                    'status': 'failed',
+                    'message': f'No available {worker_type} workers'
+                })
+                return
+            
+            # Select worker (simple round-robin or least loaded)
+            worker = min(available_workers, key=lambda w: w.current_tasks)
+            
+            # Send task to worker
             try:
-                # Get task from queue
-                task = await self.task_queue.get()
-                await self._route_task_to_worker(task)
-            except Exception as e:
-                logging.error(f"Error processing task: {e}")
+                response = requests.post(
+                    f"{worker.endpoint}/execute",
+                    json={'task': task},
+                    headers={'Authorization': f'Bearer {worker.api_key}'},
+                    timeout=30
+                )
+                
+                if response.status_code == 200:
+                    worker.current_tasks += 1
+                    self.stats['completed_tasks'] += 1
+                    logging.info(f"Task {task['id']} sent to worker {worker.worker_id}")
+                    
+                    # Broadcast status update
+                    self.socketio.emit('task_status', {
+                        'task_id': task['id'],
+                        'status': 'executing',
+                        'worker': worker.worker_id,
+                        'message': f'Task sent to {worker.worker_type} worker'
+                    })
+                else:
+                    logging.error(f"Worker {worker.worker_id} returned {response.status_code}")
+                    self.stats['failed_tasks'] += 1
+                    
+            except requests.exceptions.RequestException as e:
+                logging.error(f"Failed to send task to worker {worker.worker_id}: {e}")
+                self.stats['failed_tasks'] += 1
+                # Mark worker as offline
+                worker.status = 'offline'
+                
+        except Exception as e:
+            logging.error(f"Error routing task: {e}")
+            self.stats['failed_tasks'] += 1
     
     def _check_worker_heartbeats(self):
         """Check if workers are still alive"""
@@ -601,8 +675,8 @@ class DistributedLAMServer:
                 'source': prompt_data['source']
             }
             
-            # Add to task queue for async processing
-            asyncio.create_task(self.task_queue.put(task))
+            # Add to task queue for processing
+            self.task_queue.put(task)
             
             self.stats['total_prompts'] += 1
             
@@ -617,72 +691,6 @@ class DistributedLAMServer:
             logging.error(f"Error processing prompt: {e}")
             self.stats['failed_tasks'] += 1
             return {'status': 'error', 'message': str(e)}
-    
-    async def _route_task_to_worker(self, task: Dict):
-        """Route task to appropriate worker node"""
-        try:
-            action = task.get('action', '').lower()
-            
-            # Determine worker type needed
-            worker_type = None
-            if any(keyword in action for keyword in ['browser', 'google', 'youtube', 'site', 'amazon']):
-                worker_type = 'browser'
-            elif any(keyword in action for keyword in ['computer', 'volume', 'media', 'run', 'power']):
-                worker_type = 'computer'
-            elif any(keyword in action for keyword in ['discord', 'telegram', 'messenger']):
-                worker_type = 'messaging'
-            elif action in ['ai', 'openinterpreter']:
-                worker_type = 'ai'
-            
-            if not worker_type:
-                logging.warning(f"No worker type determined for action: {action}")
-                return
-            
-            # Find available worker
-            available_workers = [
-                w for w in self.workers.values()
-                if w.worker_type == worker_type and w.status == 'online' 
-                and w.current_tasks < w.max_concurrent_tasks
-            ]
-            
-            if not available_workers:
-                logging.warning(f"No available {worker_type} workers")
-                self.stats['failed_tasks'] += 1
-                return
-            
-            # Select worker with least load
-            worker = min(available_workers, key=lambda w: w.current_tasks)
-            
-            # Send task to worker
-            response = requests.post(
-                f"{worker.endpoint}/execute",
-                json={
-                    'task_id': task['id'],
-                    'action': action,
-                    'parameters': task.get('parameters', {}),
-                    'prompt': task['prompt']
-                },
-                headers={'Authorization': f"Bearer {worker.api_key}"},
-                timeout=30
-            )
-            
-            if response.status_code == 200:
-                result = response.json()
-                task['result'] = result
-                task['completed_at'] = datetime.now(timezone.utc).isoformat()
-                task['worker_id'] = worker.worker_id
-                
-                self.completed_tasks.append(task)
-                self.stats['completed_tasks'] += 1
-                
-                logging.info(f"Task {task['id']} completed by worker {worker.worker_id}")
-            else:
-                logging.error(f"Worker {worker.worker_id} failed to process task: {response.status_code}")
-                self.stats['failed_tasks'] += 1
-                
-        except Exception as e:
-            logging.error(f"Error routing task to worker: {e}")
-            self.stats['failed_tasks'] += 1
     
     def broadcast_worker_update(self):
         """Broadcast worker status update to connected clients"""
