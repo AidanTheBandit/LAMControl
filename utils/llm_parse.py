@@ -203,3 +203,94 @@ def LLMParse(user_prompt, transcript=None, temperature=0.1, top_p=1):
     except Exception as e:
         logging.error(f"An error occurred: {e}")
         raise ValueError(f"Failed to get response from API: {e}")
+
+
+def process_prompt(prompt: str, transcript: str = None) -> dict:
+    """
+    Process a prompt and return structured response for the distributed server
+    
+    Args:
+        prompt: The user prompt to process
+        transcript: Optional conversation transcript
+        
+    Returns:
+        dict: Structured response with action and parameters
+    """
+    try:
+        # Use the existing LLMParse function
+        result = LLMParse(prompt, transcript)
+        
+        # If result is 'x', it means not a command for LAMControl
+        if result.strip().lower() == 'x':
+            return {
+                'action': 'x',
+                'parameters': {},
+                'original_prompt': prompt
+            }
+        
+        # Parse the command result
+        # Handle chained commands (separated by &&)
+        if '&&' in result:
+            commands = [cmd.strip() for cmd in result.split('&&')]
+            # For now, just take the first valid command
+            result = commands[0] if commands else result
+        
+        # Parse the command into action and parameters
+        parts = result.split(' ', 1)
+        if len(parts) >= 2:
+            action = parts[0].lower()
+            parameters_str = parts[1]
+            
+            # Split further for specific integrations
+            if action in ['browser', 'computer', 'telegram', 'discord', 'facebook', 'openinterpreter', 'lamathome']:
+                sub_parts = parameters_str.split(' ', 1)
+                if len(sub_parts) >= 2:
+                    sub_action = sub_parts[0].lower()
+                    params = sub_parts[1]
+                    
+                    return {
+                        'action': f"{action}{sub_action}",
+                        'parameters': {
+                            'action': sub_action,
+                            'target': params,
+                            'raw_command': result
+                        },
+                        'original_prompt': prompt
+                    }
+                else:
+                    return {
+                        'action': f"{action}{parameters_str.lower()}",
+                        'parameters': {
+                            'action': parameters_str,
+                            'raw_command': result
+                        },
+                        'original_prompt': prompt
+                    }
+            else:
+                return {
+                    'action': action,
+                    'parameters': {
+                        'target': parameters_str,
+                        'raw_command': result
+                    },
+                    'original_prompt': prompt
+                }
+        else:
+            # Single word command
+            return {
+                'action': result.lower(),
+                'parameters': {
+                    'raw_command': result
+                },
+                'original_prompt': prompt
+            }
+            
+    except Exception as e:
+        logging.error(f"Error processing prompt: {e}")
+        return {
+            'action': 'error',
+            'parameters': {
+                'error': str(e)
+            },
+            'original_prompt': prompt
+        }
